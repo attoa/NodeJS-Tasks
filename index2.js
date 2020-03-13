@@ -109,20 +109,7 @@ wizard.maxHealth = +readline.question('Сложность ? (10 - 14) ', {
 });
 
 //Игра
-while (wizard.maxHealth > 0 && monster.maxHealth > 0)
-    move();
-
-//Печать результата
-if (wizard.maxHealth <= 0 && monster.maxHealth <= 0)
-    console.log('Ничья!');
-else {
-    if (wizard.maxHealth <= 0) console.log('%s победил!', monster.name);
-    if (monster.maxHealth <= 0) console.log('%s победил!', wizard.name);
-}
-
-
-//Ход игроков
-function move() {
+while (wizard.maxHealth > 0 && monster.maxHealth > 0) {
     //Выбор номера действия монстра
     let mMoveNum;
     do mMoveNum = Math.floor(Math.random() * monster.moves.length);
@@ -170,4 +157,12 @@ function move() {
 
     console.log('Здоровье монстра: %d', monster.maxHealth);
     console.log('Здоровье мага: %d\n', wizard.maxHealth);
+}
+
+//Печать результата
+if (wizard.maxHealth <= 0 && monster.maxHealth <= 0)
+    console.log('Ничья!');
+else {
+    if (wizard.maxHealth <= 0) console.log('%s победил!', monster.name);
+    if (monster.maxHealth <= 0) console.log('%s победил!', wizard.name);
 }

@@ -24,16 +24,19 @@ const filesNames = fs.readdirSync(dirName); //Массив имен файлов
 const questions = [];       //Массив объектов вопросов
 const userAnswers = [];     //Массив ответов пользователя
 
-let wrongAnswersCount = 0;  //Кол-во неправильных ответов
+const answersCount = 5;     //Кол-во вопросов
+let rightAnswersCount = 0;  //Кол-во правильных ответов
 
 //Чтение случайных 5-ти файлов
-for (let i = 0; i < 5 && i < filesNames.length; i++) {
+for (let i = 0; i < answersCount && i < filesNames.length; i++) {
     let n;  //Номер имени файла в массиве
 
     do n = Math.floor(Math.random() * filesNames.length);
     while (questions.find(q => q.fileName === filesNames[n]));
 
-    parseFile(filesNames[n]);
+    //Добавление объекта вопроса в массив
+    const question = parseFile(filesNames[n]);
+    if (question) questions.push(question);
 }
 
 //Спрашивание вопросов
@@ -49,14 +52,18 @@ questions.forEach((q, i) => {
     });
     userAnswers.push({'questionN': i, 'answerN': n});
 
-    //Подсчет неправильных ответов
-    if (q.rightN !== n)
-        wrongAnswersCount++;
+    //Подсчет правильных ответов
+    if (q.rightN === n)
+        rightAnswersCount++;
 });
 
 //Печать результата
-if (wrongAnswersCount) {
-    console.log('\nНеправильных ответов: %d', wrongAnswersCount);
+console.log('\nПравильных ответов: %d', rightAnswersCount);
+if (rightAnswersCount === answersCount) {
+    console.log('Все ответы верны!');
+}
+else {
+    console.log('Неправильных ответов: %d', answersCount - rightAnswersCount);
 
     //Печать вопросов, на которые был дан неправильный ответ
     userAnswers.forEach(a => {
@@ -65,8 +72,6 @@ if (wrongAnswersCount) {
             console.log('"%s" Правильный ответ: %s', q.question, q.answers[q.rightN-1]);
     });
 }
-else
-    console.log('\nВсе ответы верны!');
 
 
 //Разбор файла
@@ -75,15 +80,16 @@ function parseFile(fileName) {
         //Массив строк файла
         const text = fs.readFileSync(dirName + '/' + fileName, 'utf8').split('\r\n');
 
-        //Добавление объекта-вопроса в массив
-        questions.push({
+        //Возврат объекта-вопроса
+        return {
             'question': text[0], 
             'rightN': +text[1], 
-            'answers': text.slice(2), 
+            'answers': text.slice(2),
             'fileName': fileName
-        });
+        };
     }
     catch (err) {
         console.error(err)
+        return false;
     }
 }
